@@ -70,6 +70,11 @@ public class UserStatisticsJob {
     public static DataStream<UserStatistics> defineWorkflow(
             DataStream<FlightData> flightDataSource
     ) {
+        // reduce is being used to continuously process the messages. 
+        //We could have called the process method of the ProcessUserStatisticsFunction() over here
+        // Reduce will call the merge function to merge two UserStatistics events to one
+        // Then it calls the PorcessUserStatisticsFunction() to iterate, which will have one element,
+        // to accumulate the result
         return flightDataSource
                 .map(UserStatistics::new)
                 .keyBy(UserStatistics::getEmailAddress)
